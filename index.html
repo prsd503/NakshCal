@@ -20,11 +20,6 @@
             --holiday-text: #991b1b;
             --astro-color: #6ee7b7;
             --nakshatra-color: #fcd34d;
-            
-            /* Royal Blue Accent Theme for Notes */
-            --royalblue-accent: #4169e1;
-            --royalblue-bg: rgba(65, 105, 225, 0.35);
-            --royalblue-border: rgba(65, 105, 225, 0.7);
         }
 
         * {
@@ -53,7 +48,6 @@
             border-radius: 24px;
             padding: 16px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-            position: relative;
         }
 
         .calendar-header {
@@ -83,7 +77,9 @@
             transition: all 0.2s ease;
         }
 
-        .nav-btn:hover { background: rgba(255, 255, 255, 0.2); }
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
 
         .weekdays-grid {
             display: grid;
@@ -121,7 +117,7 @@
         }
 
         .day-cell:hover { background: rgba(255, 255, 255, 0.08); }
-        .day-cell.selected { border: 2px solid var(--secondary-accent) !important; background: rgba(255, 255, 255, 0.12); }
+        .day-cell.selected { border: 2px solid var(--secondary-accent); background: rgba(255, 255, 255, 0.12); }
         .day-cell.empty { background: transparent; border: none; pointer-events: none; }
         .day-num { font-size: 1.1rem; font-weight: 700; }
         .day-cell.is-sunday .day-num { color: var(--sunday-color); }
@@ -129,16 +125,18 @@
         .day-cell.is-holiday { background: var(--holiday-bg) !important; border-color: #fca5a5; }
         .day-cell.is-holiday .day-num { color: var(--holiday-text) !important; }
 
-        /* Royal Blue Highlighted Day Style */
-        .day-cell.has-note {
-            background: var(--royalblue-bg) !important;
-            border: 1.5px solid var(--royalblue-border) !important;
+        .note-indicator {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 6px;
+            height: 6px;
+            background-color: #3b82f6;
+            border-radius: 50%;
+            display: none;
         }
-        
-        .day-cell.has-note .day-num {
-            color: #ffffff !important;
-            text-shadow: 0px 0px 8px rgba(255,255,255,0.4);
-        }
+
+        .day-cell.has-note .note-indicator { display: block; }
 
         .astro-info {
             display: flex;
@@ -160,10 +158,6 @@
             color: #7f1d1d;
             font-weight: 600;
         }
-
-        .day-cell.has-note .sun-sign { color: #e0e7ff; }
-        .day-cell.has-note .moon-sign { color: #c7d2fe; }
-        .day-cell.has-note .nakshatra { color: #a5b4fc; }
 
         .details-panel {
             margin-top: 16px;
@@ -204,7 +198,7 @@
         }
 
         .badge-nakshatra { background: #78350f; color: #fde68a; }
-        .badge-note { background: var(--royalblue-accent); color: #ffffff; }
+        .badge-note { background: #1e3a8a; color: #bfdbfe; }
 
         .holiday-block {
             background: rgba(239, 68, 68, 0.2);
@@ -225,7 +219,7 @@
         }
         .note-input:focus { border-color: var(--secondary-accent); }
         .note-btn {
-            background: var(--royalblue-accent); border: none; color: white;
+            background: var(--primary-accent); border: none; color: white;
             padding: 6px 12px; border-radius: 8px; font-size: 0.8rem; font-weight: 600; cursor: pointer;
         }
 
@@ -234,38 +228,69 @@
             border-radius: 10px; font-size: 0.8rem; font-weight: 600; margin-bottom: 12px; cursor: pointer;
         }
 
-        /* Modal Dialog Component Styles */
+        /* --- Custom Modal Styling --- */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(4px);
-            display: flex; justify-content: center; align-items: center;
-            z-index: 1000; opacity: 0; pointer-events: none;
-            transition: opacity 0.25s ease;
+            background: rgba(10, 11, 26, 0.75);
+            backdrop-filter: blur(8px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
         }
-        .modal-overlay.show { opacity: 1; pointer-events: auto; }
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
         .modal-box {
-            background: #1a1c29;
+            background: rgba(30, 32, 47, 0.95);
             border: 1px solid var(--card-border);
             border-radius: 20px;
             padding: 24px;
-            width: 90%;
             max-width: 380px;
+            width: 90%;
             text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
             transform: scale(0.9);
-            transition: transform 0.25s ease;
+            transition: transform 0.3s ease;
         }
-        .modal-overlay.show .modal-box { transform: scale(1); }
-        .modal-title { font-size: 1.2rem; font-weight: 700; color: var(--primary-accent); margin-bottom: 12px; }
-        .modal-desc { font-size: 0.9rem; color: var(--text-main); line-height: 1.5; margin-bottom: 20px; }
+        .modal-overlay.active .modal-box {
+            transform: scale(1);
+        }
+        .modal-icon {
+            font-size: 2.5rem;
+            margin-bottom: 12px;
+        }
+        .modal-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--secondary-accent);
+            margin-bottom: 8px;
+        }
+        .modal-message {
+            font-size: 0.9rem;
+            color: var(--text-main);
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
         .modal-close-btn {
-            background: var(--royalblue-accent); color: white; border: none;
-            padding: 10px 24px; border-radius: 10px; font-weight: 600; cursor: pointer;
-            transition: filter 0.2s;
+            background: linear-gradient(135deg, var(--primary-accent), var(--secondary-accent));
+            border: none;
+            color: white;
+            font-weight: 600;
+            padding: 10px 24px;
+            border-radius: 12px;
+            cursor: pointer;
+            width: 100%;
+            transition: opacity 0.2s;
         }
-        .modal-close-btn:hover { filter: brightness(1.1); }
+        .modal-close-btn:hover {
+            opacity: 0.9;
+        }
 
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(4px); }
@@ -292,11 +317,11 @@
         <div class="details-panel" id="info-panel"></div>
     </div>
 
-    <!-- Custom App Modal Popup -->
-    <div class="modal-overlay" id="app-modal">
+    <div class="modal-overlay" id="custom-modal">
         <div class="modal-box">
-            <div class="modal-title" id="modal-title-text">Notice</div>
-            <div class="modal-desc" id="modal-desc-text">Notification settings status change request.</div>
+            <div class="modal-icon">⚠️</div>
+            <div class="modal-title" id="modal-title">Notice</div>
+            <div class="modal-message" id="modal-message">Notification feature updates.</div>
             <button class="modal-close-btn" id="modal-close-btn">Dismiss</button>
         </div>
     </div>
@@ -338,23 +363,32 @@
         const containerEl = document.getElementById("days-container");
         const panelEl = document.getElementById("info-panel");
         const permBtn = document.getElementById("enable-notifications-btn");
-        
-        // Modal Selectors
-        const modalOverlay = document.getElementById("app-modal");
-        const modalTitle = document.getElementById("modal-title-text");
-        const modalDesc = document.getElementById("modal-desc-text");
-        const modalClose = document.getElementById("modal-close-btn");
 
-        function showAppModal(title, text) {
+        // Modal Elements
+        const modalOverlay = document.getElementById("custom-modal");
+        const modalTitle = document.getElementById("modal-title");
+        const modalMessage = document.getElementById("modal-message");
+        const modalCloseBtn = document.getElementById("modal-close-btn");
+
+        // Helper function to trigger custom modal instead of system alert
+        function showAlertModal(title, message) {
             modalTitle.textContent = title;
-            modalDesc.textContent = text;
-            modalOverlay.classList.add("show");
+            modalMessage.textContent = message;
+            modalOverlay.classList.add("active");
         }
 
-        modalClose.addEventListener("click", () => {
-            modalOverlay.classList.remove("show");
+        modalCloseBtn.addEventListener("click", () => {
+            modalOverlay.classList.remove("active");
         });
 
+        // Close modal when clicking outside the box
+        modalOverlay.addEventListener("click", (e) => {
+            if (e.target === modalOverlay) {
+                modalOverlay.classList.remove("active");
+            }
+        });
+
+        // Service Worker registration block
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js')
@@ -369,7 +403,7 @@
 
         permBtn.addEventListener("click", () => {
             if (!window.Notification) {
-                showAppModal("Not Supported", "Push system reminders are not compatible with your present browser software config.");
+                showAlertModal("Not Supported", "Push notifications are not supported on this browser or mobile device setup.");
                 return;
             }
             Notification.requestPermission().then(permission => {
@@ -474,6 +508,10 @@
                 if (indianHolidays2026[dateString]) cell.classList.add("is-holiday");
                 if (savedNotes[dateString]) cell.classList.add("has-note");
 
+                const dot = document.createElement("div");
+                dot.classList.add("note-indicator");
+                cell.appendChild(dot);
+
                 const dayNumEl = document.createElement("div");
                 dayNumEl.classList.add("day-num");
                 dayNumEl.textContent = day;
@@ -485,14 +523,4 @@
                 astroContainer.classList.add("astro-info");
                 astroContainer.innerHTML = `
                     <span class="sun-sign">⊙ ${astro.sun}</span>
-                    <span class="moon-sign">☾ ${astro.moon}</span>
-                    <span class="nakshatra">★ ${astro.nakshatra.substring(0, 6)}..</span>
-                `;
-                cell.appendChild(astroContainer);
-
-                cell.addEventListener("click", () => {
-                    document.querySelectorAll('.day-cell').forEach(c => c.classList.remove('selected'));
-                    cell.classList.add('selected');
-                    selectedDateString = dateString;
-
-                    let holidayHTML 
+         
