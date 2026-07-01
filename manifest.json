@@ -1,19 +1,1 @@
-{
-  "name": "NakshCal Vedic Calendar",
-  "short_name": "NakshCal",
-  "description": "A comprehensive and precise Vedic calendar and Panchang application.",
-  "start_url": "/NakshCal/",
-  "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#ff6f00",
-  "orientation": "portrait-primary",
-  "icons": [
-    {
-      "src": "icon.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
-    }
-  ]
-}
 
