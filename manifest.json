@@ -1,17 +1,24 @@
 {
-  "name": "Vedic Astro Calendar 2026",
-  "short_name": "VedicCal",
-  "start_url": "index.html",
-  "display": "standalone",
-  "background_color": "#10111a",
+  "short_name": "NakshCal",
+  "name": "NakshCal",
+  "start_url": "/NakshCal/index.html",
+  "background_color": "#1a1c29",
   "theme_color": "#ff7e5f",
+  "display": "standalone",
   "orientation": "portrait",
+  "scope": "/NakshCal/",
   "icons": [
     {
-      "src": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><circle cx='256' cy='256' r='240' fill='%231a1c29'/><circle cx='256' cy='256' r='180' fill='%23ff7e5f'/></svg>",
+      "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIiB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiI+PHJlY3Qgd2lkdGg9IjUxMiIgaGVpZ2h0PSI1MTIiIGZpbGw9IiMxYTFjMjkiLz48cmVjdCB4PSI2NCIgeT0iMTI4IiB3aWR0aD0iMzg0IiBoZWlnaHQ9IjMyMCIgcng9IjMyIiBmaWxsPSIjZmY3ZTVmIi8+PHJlY3QgeD0iNjQiIHk9IjIwMCIgd2lkdGg9IjM4NCIgaGVpZ2h0PSIyNDgiIHJ4PSIxNiIgZmlsbD0iI2YzZjRmNiIvPjxjaXJjbGUgY3g9IjEyOCIgY3k9IjI2MCIgcj0iMjAiIGZpbGw9IiNmZWI0N2IiLz48Y2lyY2xlIGN4PSIyNTYiIGN5PSIyNjAiIHI9IjIwIiBmaWxsPSIjZmViNDdiIi8+PGNpcmNsZSBjeD0iMzg0IiBjeT0iMjYwIiByPSIyMCIgZmlsbD0iI2ZlYjQ3YiIvPjxjaXJjbGUgY3g9IjEyOCIgY3k9IjM0MCIgcj0iMjAiIGZpbGw9IiNmY2QzNGQiLz48Y2lyY2xlIGN4PSIyNTYiIGN5PSIzNDAiIHI9IjIwIiBmaWxsPSIjZmNkMzRkIi8+LetterIGN4PSIzODQiIGN5PSIzNDAiIHI9IjIwIiBmaWxsPSIjZmNkMzRkIi8+PC9zdmc+",
       "sizes": "512x512",
       "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIiB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiI+PHJlY3Qgd2lkdGg9IjUxMiIgaGVpZ2h0PSI1MTIiIGZpbGw9IiMxYTFjMjkiLz48cmVjdCB4PSI2NCIgeT0iMTI4IiB3aWR0aD0iMzg0IiBoZWlnaHQ9IjMyMCIgcng9IjMyIiBmaWxsPSIjZmY3ZTVmIi8+PHJlY3QgeD0iNjQiIHk9IjIwMCIgd2lkdGg9IjM4NCIgaGVpZ2h0PSIyNDgiIHJ4PSIxNiIgZmlsbD0iI2YzZjRmNiIvPjxjaXJjbGUgY3g9IjEyOCIgY3k9IjI2MCIgcj0iMjAiIGZpbGw9IiNmZWI0N2IiLz48Y2lyY2xlIGN4PSIyNTYiIGN5PSIyNjAiIHI9IjIwIiBmaWxsPSIjZmViNDdiIi8+PGNpcmNsZSBjeD0iMzg0IiBjeT0iMjYwIiByPSIyMCIgZmlsbD0iI2ZlYjQ3YiIvPjxjaXJjbGUgY3g9IjEyOCIgY3k9IjM0MCIgcj0iMjAiIGZpbGw9IiNmY2QzNGQiLz48Y2lyY2xlIGN4PSIyNTYiIGN5PSIzNDAiIHI9IjIwIiBmaWxsPSIjZmNkMzRkIi8+LetterIGN4PSIzODQiIGN5PSIzNDAiIHI9IjIwIiBmaWxsPSIjZmNkMzRkIi8+PC9zdmc+",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
     }
   ]
 }
