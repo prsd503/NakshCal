@@ -228,7 +228,7 @@
             border-radius: 10px; font-size: 0.8rem; font-weight: 600; margin-bottom: 12px; cursor: pointer;
         }
 
-        /* --- Custom Modal Styling --- */
+        /* --- Glassmorphic Modal --- */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -237,10 +237,10 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 1000;
+            z-index: 2000;
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.3s ease;
+            transition: opacity 0.25s ease;
         }
         .modal-overlay.active {
             opacity: 1;
@@ -256,7 +256,7 @@
             text-align: center;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
             transform: scale(0.9);
-            transition: transform 0.3s ease;
+            transition: transform 0.25s ease;
         }
         .modal-overlay.active .modal-box {
             transform: scale(1);
@@ -286,10 +286,6 @@
             border-radius: 12px;
             cursor: pointer;
             width: 100%;
-            transition: opacity 0.2s;
-        }
-        .modal-close-btn:hover {
-            opacity: 0.9;
         }
 
         @keyframes fadeIn {
@@ -317,11 +313,12 @@
         <div class="details-panel" id="info-panel"></div>
     </div>
 
+    <!-- Container for Custom Popup Modal -->
     <div class="modal-overlay" id="custom-modal">
         <div class="modal-box">
             <div class="modal-icon">⚠️</div>
             <div class="modal-title" id="modal-title">Notice</div>
-            <div class="modal-message" id="modal-message">Notification feature updates.</div>
+            <div class="modal-message" id="modal-message">Notification details.</div>
             <button class="modal-close-btn" id="modal-close-btn">Dismiss</button>
         </div>
     </div>
@@ -364,54 +361,53 @@
         const panelEl = document.getElementById("info-panel");
         const permBtn = document.getElementById("enable-notifications-btn");
 
-        // Modal Elements
+        // Modal Elements safely targeted
         const modalOverlay = document.getElementById("custom-modal");
         const modalTitle = document.getElementById("modal-title");
         const modalMessage = document.getElementById("modal-message");
         const modalCloseBtn = document.getElementById("modal-close-btn");
 
-        // Helper function to trigger custom modal instead of system alert
-        function showAlertModal(title, message) {
-            modalTitle.textContent = title;
-            modalMessage.textContent = message;
-            modalOverlay.classList.add("active");
+        function showModal(title, message) {
+            if (modalTitle && modalMessage && modalOverlay) {
+                modalTitle.textContent = title;
+                modalMessage.textContent = message;
+                modalOverlay.classList.add("active");
+            }
         }
 
-        modalCloseBtn.addEventListener("click", () => {
-            modalOverlay.classList.remove("active");
-        });
+        if (modalCloseBtn && modalOverlay) {
+            modalCloseBtn.addEventListener("click", () => modalOverlay.classList.remove("active"));
+            modalOverlay.addEventListener("click", (e) => {
+                if (e.target === modalOverlay) modalOverlay.classList.remove("active");
+            });
+        }
 
-        // Close modal when clicking outside the box
-        modalOverlay.addEventListener("click", (e) => {
-            if (e.target === modalOverlay) {
-                modalOverlay.classList.remove("active");
-            }
-        });
-
-        // Service Worker registration block
+        // Service Worker registration block safely monitored
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js')
                 .then(reg => {
                     activeServiceWorkerRegistration = reg;
-                    if (window.Notification && Notification.permission === "granted") {
+                    if (window.Notification && Notification.permission === "granted" && permBtn) {
+                        permBtn.style.display = "none";
+                    }
+                }).catch(err => console.log("SW local registration skipped setup details."));
+            });
+        }
+
+        if (permBtn) {
+            permBtn.addEventListener("click", () => {
+                if (!window.Notification) {
+                    showModal("Not Supported", "Push notifications are not supported on this device setup or browser privacy configuration.");
+                    return;
+                }
+                Notification.requestPermission().then(permission => {
+                    if (permission === "granted") {
                         permBtn.style.display = "none";
                     }
                 });
             });
         }
-
-        permBtn.addEventListener("click", () => {
-            if (!window.Notification) {
-                showAlertModal("Not Supported", "Push notifications are not supported on this browser or mobile device setup.");
-                return;
-            }
-            Notification.requestPermission().then(permission => {
-                if (permission === "granted") {
-                    permBtn.style.display = "none";
-                }
-            });
-        });
 
         function formatClockTime(minutes) {
             minutes = (minutes + 1440) % 1440;
@@ -483,9 +479,10 @@
         }
 
         function renderCalendar(month) {
+            if (!containerEl || !titleEl) return;
             containerEl.innerHTML = "";
             titleEl.textContent = `${monthNames[month]} ${year}`;
-            panelEl.classList.remove("active");
+            if (panelEl) panelEl.classList.remove("active");
 
             const firstDayIndex = new Date(year, month, 1).getDay();
             const totalDays = new Date(year, month + 1, 0).getDate();
@@ -523,4 +520,77 @@
                 astroContainer.classList.add("astro-info");
                 astroContainer.innerHTML = `
                     <span class="sun-sign">⊙ ${astro.sun}</span>
-         
+                    <span class="moon-sign">☾ ${astro.moon}</span>
+                    <span class="nakshatra">★ ${astro.nakshatra.substring(0, 6)}..</span>
+                `;
+                cell.appendChild(astroContainer);
+
+                cell.addEventListener("click", () => {
+                    document.querySelectorAll('.day-cell').forEach(c => c.classList.remove('selected'));
+                    cell.classList.add('selected');
+                    selectedDateString = dateString;
+
+                    if (!panelEl) return;
+                    let holidayHTML = indianHolidays2026[dateString] ? 
+                        `<div class="holiday-block">🎉 <strong>Holiday:</strong> ${indianHolidays2026[dateString]}</div>` : '';
+
+                    let currentNoteVal = savedNotes[dateString] || "";
+
+                    panelEl.innerHTML = `
+                        <div class="panel-date">${day} ${monthNames[month]} ${year} (${new Date(year, month, day).toLocaleDateString('en-US', {weekday: 'long'})})</div>
+                        ${holidayHTML}
+                        <div class="info-row">
+                            <span class="info-badge badge-nakshatra">NAKSHATRA</span>
+                            <div>
+                                <strong>${astro.nakshatra}</strong>
+                                <div class="time-entry"><span class="time-label">Starts:</span> ${astro.startDateText}, ${astro.startTimeText}</div>
+                                <div class="time-entry"><span class="time-label">Ends:</span> ${astro.endDateText}, ${astro.endTimeText}</div>
+                            </div>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-badge badge-note">DAILY NOTE</span>
+                            <div style="flex: 1;">
+                                <div class="note-input-container">
+                                    <input type="text" id="note-field" class="note-input" placeholder="Add custom reminder..." value="${currentNoteVal}">
+                                    <button class="note-btn" id="save-note-btn">Save</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    panelEl.classList.add("active");
+                    const saveBtn = document.getElementById("save-note-btn");
+                    if (saveBtn) saveBtn.addEventListener("click", handleSaveRoutine);
+                });
+
+                containerEl.appendChild(cell);
+            }
+        }
+
+        setInterval(() => {
+            if (activeServiceWorkerRegistration && activeServiceWorkerRegistration.active) {
+                activeServiceWorkerRegistration.active.postMessage({
+                    action: 'checkNotifications',
+                    notes: savedNotes
+                });
+            }
+        }, 30000); 
+
+        const prevBtn = document.getElementById("prev-btn");
+        const nextBtn = document.getElementById("next-btn");
+
+        if (prevBtn) {
+            prevBtn.addEventListener("click", () => {
+                if (currentMonth > 0) { currentMonth--; renderCalendar(currentMonth); }
+            });
+        }
+
+        if (nextBtn) {
+            nextBtn.addEventListener("click", () => {
+                if (currentMonth < 11) { currentMonth++; renderCalendar(currentMonth); }
+            });
+        }
+
+        renderCalendar(currentMonth);
+    </script>
+</body>
+</html>
